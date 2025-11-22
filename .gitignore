@@ -53,6 +53,6 @@ migrations/
 # FastAPI static/media files
 static/
 media/
-
+*.code-workspace
 
 venv/*
