@@ -1,0 +1,58 @@
+/venv
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+.eggs/
+*.egg-info/
+*.egg
+*.whl
+
+# Python virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Environment variable/config files
+*.env
+.env.*
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files (if any local SQLite used)
+*.sqlite3
+*.db
+
+# Logs
+*.log
+
+# Test cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.tox/
+
+# Migrations/history (if used)
+alembic/
+migrations/
+
+# FastAPI static/media files
+static/
+media/
+
+
+venv/*
