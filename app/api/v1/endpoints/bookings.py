@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from typing import Optional
 import asyncpg
+from uuid import UUID
 from app.core.database import get_db
 from app.api.v1.dependencies import get_current_user
 from app.services.booking_service import BookingService
@@ -35,7 +36,7 @@ async def pay_booking(
     conn: asyncpg.Connection = Depends(get_db)
 ):
     """Pay for reserved booking"""
-    from uuid import UUID
+
     try:
         reservation_uuid = UUID(reservation_id)
         result = await BookingService.pay_booking(conn, current_user['id'], reservation_uuid)

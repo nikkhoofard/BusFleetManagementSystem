@@ -1,6 +1,6 @@
 import asyncpg
 from typing import Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from uuid import UUID
 import random
 
@@ -10,7 +10,7 @@ class SMSRepository:
     async def create_verification(conn: asyncpg.Connection, mobile: str) -> dict:
         """Create a new SMS verification code"""
         code = str(random.randint(100000, 999999))
-        expires_at = datetime.utcnow() + timedelta(minutes=5)
+        expires_at = datetime.now(tz=timezone.utc) + timedelta(minutes=5)
         
         query = """
             INSERT INTO sms_verifications (mobile, code, expires_at)
