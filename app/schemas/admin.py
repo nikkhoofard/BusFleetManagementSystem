@@ -38,3 +38,11 @@ class BusiestDriverResponse(BaseModel):
     driver_mobile: str
     trips_count: int
 
+
+class BusDriversResponse(BaseModel):
+    driver_id: UUID
+    mobile: str
+    user_id: UUID
+
+    class Config:
+        from_attributes = True

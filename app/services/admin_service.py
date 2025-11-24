@@ -1,6 +1,6 @@
 import asyncpg
 from uuid import UUID
-from datetime import datetime
+from datetime import datetime, timezone
 from app.repositories.bus_repository import BusRepository
 from app.repositories.trip_repository import TripRepository
 from app.repositories.admin_repository import AdminRepository
@@ -50,9 +50,9 @@ class AdminService:
     ) -> list:
         """Get bus revenue per month"""
         if month is None:
-            month = datetime.utcnow().month
+            month = datetime.now(timezone.utc).month
         if year is None:
-            year = datetime.utcnow().year
+            year = datetime.now(timezone.utc).year
         
         return await AdminRepository.get_bus_revenue(conn, month, year)
     
@@ -60,4 +60,10 @@ class AdminService:
     async def get_busiest_driver(conn: asyncpg.Connection) -> dict:
         """Get busiest driver"""
         return await AdminRepository.get_busiest_driver(conn)
+    
+    @staticmethod
+    async def get_bus_drivers(conn: asyncpg.Connection) -> dict:
+        """Get busiest driver"""
+        return await AdminRepository.get_bus_drivers(conn)
+
 

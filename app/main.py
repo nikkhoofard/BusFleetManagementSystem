@@ -21,6 +21,8 @@ app = FastAPI(
     title=settings.app_name,
     description="Bus Fleet Management System API",
     version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
     lifespan=lifespan
 )
 

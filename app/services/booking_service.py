@@ -1,5 +1,5 @@
 import asyncpg
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 from uuid import UUID
 from app.repositories.booking_repository import BookingRepository
 from app.repositories.trip_repository import TripRepository
@@ -20,12 +20,21 @@ class BookingService:
         """Reserve a seat for 10 minutes"""
         async with conn.transaction():
             # Check daily booking limit
-            today = datetime.utcnow()
+            today = datetime.now(timezone.utc)
             daily_count = await BookingRepository.get_daily_booking_count(conn, user_id, today)
             if daily_count >= BookingService.MAX_DAILY_BOOKINGS:
                 raise ValueError(f"Daily booking limit reached (max {BookingService.MAX_DAILY_BOOKINGS})")
             
             # Verify seat exists and get price
+            await BookingRepository.cleanup_expired_reservations(conn)
+
+            # یا حداقل برای این صندلی خاص:
+            await BookingRepository.delete_expired_reservation_for_seat(conn, request.seat_id)
+
+            # 2. چک کن هنوز رزرو فعال برای این صندلی وجود نداشته باشه
+            existing = await BookingRepository.get_active_reservation_for_seat(conn, request.seat_id)
+            if existing:
+                raise ValueError("این صندلی در حال حاضر رزرو موقت شده است")
             seat = await TripRepository.get_seat(conn, request.seat_id)
             if not seat:
                 raise ValueError("Seat not found")
@@ -34,7 +43,7 @@ class BookingService:
                 raise ValueError("Seat does not belong to this trip")
             
             # Create reservation (with locking)
-            expires_at = datetime.utcnow() + timedelta(minutes=BookingService.RESERVATION_DURATION_MINUTES)
+            expires_at = datetime.now(timezone.utc) + timedelta(minutes=BookingService.RESERVATION_DURATION_MINUTES)
             reservation = await BookingRepository.create_reservation(
                 conn,
                 user_id,
@@ -72,7 +81,7 @@ class BookingService:
             if reservation['status'] != 'held':
                 raise ValueError("Reservation is not in held status")
             
-            if reservation['expires_at'] < datetime.utcnow():
+            if reservation['expires_at'] < datetime.now(timezone.utc):
                 raise ValueError("Reservation has expired")
             
             # Get seat and passenger info from reservation

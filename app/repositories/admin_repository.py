@@ -62,3 +62,19 @@ class AdminRepository:
         row = await conn.fetchrow(query)
         return dict(row) if row else {"driver_id": None, "driver_mobile": None, "trips_count": 0}
 
+    @staticmethod
+    async def get_bus_drivers(conn: asyncpg.Connection) -> list[dict]:
+        """Get driver with most trips"""
+        query = """
+            SELECT 
+                u.id AS driver_id,
+                u.mobile,
+                up.user_id
+                FROM users u
+                JOIN user_profiles up ON u.id = up.user_id
+                JOIN profiles p ON up.profile_id = p.id
+                WHERE p.name = 'driver';
+        """
+        rows = await conn.fetch(query)
+        return rows
+

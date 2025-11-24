@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from typing import Optional
+from typing import Optional,List
 import asyncpg
 from app.core.database import get_db
 from app.api.v1.dependencies import get_current_user, require_profile
 from app.services.admin_service import AdminService
 from app.schemas.admin import (
     BusCreateRequest, TripCreateRequest, HourlyBookingsResponse,
-    BusRevenueResponse, BusiestDriverResponse
+    BusRevenueResponse, BusiestDriverResponse,BusDriversResponse
 )
 from app.models.bus import BusCreate
 from app.models.trip import TripCreate
@@ -86,3 +86,14 @@ async def get_busiest_driver(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/reports/bus-drivers", response_model=List[BusDriversResponse])
+async def get_bus_drivers(
+    current_user: dict = Depends(require_profile("operator")),
+    conn: asyncpg.Connection = Depends(get_db)
+):
+    """Get driver with most trips"""
+    try:
+        result = await AdminService.get_bus_drivers(conn)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

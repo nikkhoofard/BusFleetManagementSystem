@@ -1,7 +1,7 @@
 import asyncpg
 from typing import Optional, List
 from uuid import UUID
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone   
 
 
 class BookingRepository:
@@ -89,7 +89,7 @@ class BookingRepository:
         if reservation['status'] != 'held':
             raise ValueError("Reservation is not in held status")
         
-        if reservation['expires_at'] < datetime.utcnow():
+        if reservation['expires_at'] < datetime.now(timezone.utc):
             raise ValueError("Reservation has expired")
         
         # Create booking
@@ -187,3 +187,27 @@ class BookingRepository:
         result = await conn.execute(query)
         return int(result.split()[-1]) if result else 0
 
+    @staticmethod
+    async def cleanup_expired_reservations(conn: asyncpg.Connection):
+        await conn.execute("""
+            DELETE FROM reservations 
+            WHERE expires_at < NOW() AT TIME ZONE 'utc'
+        """)
+
+    # یا فقط برای یه صندلی خاص (سریع‌تر و بهتر)
+    @staticmethod
+    async def delete_expired_reservation_for_seat(conn: asyncpg.Connection, seat_id: UUID):
+        await conn.execute("""
+            DELETE FROM reservations 
+            WHERE seat_id = $1 
+              AND expires_at < NOW() AT TIME ZONE 'utc'
+        """, seat_id)
+
+# چک کردن رزرو فعال
+    @staticmethod
+    async def get_active_reservation_for_seat(conn: asyncpg.Connection, seat_id: UUID):
+        return await conn.fetchrow("""
+            SELECT * FROM reservations 
+            WHERE seat_id = $1 
+              AND expires_at > NOW() AT TIME ZONE 'utc'
+        """, seat_id)   

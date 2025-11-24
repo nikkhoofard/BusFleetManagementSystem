@@ -36,7 +36,7 @@ async def seed_database():
         # Create sample users
         print("Creating sample users...")
         users = []
-        for i in range(1, 30000):
+        for i in range(1, 3000):
             # شماره‌های فیک: 09 + 9 رقم = 11 کاراکتر
             # استفاده از 0912xxxxxxx (09 + 12 + 7 رقم)
             mobile = f"0912{i:07d}"  # 0912 + 0000001 = 09120000001 (11 کاراکتر)
