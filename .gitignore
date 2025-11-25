@@ -56,3 +56,8 @@ media/
 *.code-workspace
 
 venv/*
+
+.postman/
+app.rar
+available.json
+postman/
