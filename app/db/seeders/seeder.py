@@ -13,7 +13,7 @@ from app.models.user import UserCreate, UserProfileCreate
 from app.models.route import RouteCreate
 from app.models.bus import BusCreate
 from app.models.trip import TripCreate
-
+from app.db.seeders import seed100kseats,seed_100k_reservation
 
 async def seed_database():
     """Seed the database with initial data"""
@@ -36,7 +36,7 @@ async def seed_database():
         # Create sample users
         print("Creating sample users...")
         users = []
-        for i in range(1, 3000):
+        for i in range(1, 5000):
             # شماره‌های فیک: 09 + 9 رقم = 11 کاراکتر
             # استفاده از 0912xxxxxxx (09 + 12 + 7 رقم)
             mobile = f"0912{i:07d}"  # 0912 + 0000001 = 09120000001 (11 کاراکتر)
@@ -97,9 +97,9 @@ async def seed_database():
         # Create buses
         print("Creating buses...")
         buses = []
-        for i, route in enumerate(routes[:3]):  # Create 3 buses
+        for i, route in enumerate(routes[:]):  # Create 3 buses
             bus_data = BusCreate(
-                plate_number=f"24ع{100+i}",
+                plate_number=f"67ز{100+i}",
                 capacity=40,
                 route_id=route['id'],
                 owner_id=operator['id'],
@@ -126,7 +126,7 @@ async def seed_database():
                 
                 # Create seats for this trip
                 bus_info = await BusRepository.get_by_id(conn, bus['id'])
-                capacity = bus_info['capacity'] if bus_info else 40
+                capacity = bus_info['capacity'] if bus_info else 50
                 
                 for seat_num in range(1, capacity + 1):
                     # Price varies by seat number (window seats more expensive)
@@ -149,4 +149,7 @@ async def seed_database():
 
 if __name__ == "__main__":
     asyncio.run(seed_database())
+    asyncio.run(seed100kseats.seed_seats())
+    asyncio.run(seed_100k_reservation.seed_reservations())
+    
 
