@@ -74,9 +74,12 @@ uvicorn app.main:app --reload
 ### Admin
 - `POST /api/v1/admin/buses` - Create bus (operator only)
 - `POST /api/v1/admin/trips` - Create trip (operator only)
+- `POST /api/v1/admin/create-route` - Create route (operator only)
 - `GET /api/v1/admin/reports/hourly-bookings` - Bookings per hour
 - `GET /api/v1/admin/reports/bus-revenue` - Revenue per bus per month
 - `GET /api/v1/admin/reports/busiest-driver` - Driver with most trips
+- `GET /api/v1/admin/get-all-route` - get all route(operator only)
+- `GET /api/v1/admin/get-all-bus` - Get all active bus(operator only)
 
 ## Database Schema
 
