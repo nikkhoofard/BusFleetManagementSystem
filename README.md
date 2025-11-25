@@ -34,10 +34,13 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your database URL, JWT secret, and ippanel API key
 ```
+**Create migrations directory in /db dir and paste sql shema**
 
 3. **Run migrations:**
 ```bash
-python app/db/migrate.py
+psql -U <yourusername> -h localhost -p 5432 -c "CREATE DATABASE bus_fleet;"
+
+python -m app.db.migrate
 ```
 
 4. **Seed database:**
