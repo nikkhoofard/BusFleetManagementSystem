@@ -49,7 +49,8 @@ python app/db/seeders/seeder.py
 ```bash
 uvicorn app.main:app --reload
 ```
-
+## Postman Collection Link
+https://.postman.co/workspace/My-Workspace~6c855e4f-0e75-43df-8fba-8e9f54b55be7/collection/28427492-83da5fb0-0487-4088-a503-840c224ac115?action=share&creator=28427492
 ## API Endpoints
 
 ### Authentication
