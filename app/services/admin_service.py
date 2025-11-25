@@ -66,4 +66,8 @@ class AdminService:
         """Get busiest driver"""
         return await AdminRepository.get_bus_drivers(conn)
 
+    @staticmethod
+    async def get_bus(conn: asyncpg.Connection) -> dict:
+        """Get busiest driver"""
+        return await BusRepository.get_bus(conn)
 

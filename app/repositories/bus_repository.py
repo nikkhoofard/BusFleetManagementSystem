@@ -67,3 +67,11 @@ class BusRepository:
         rows = await conn.fetch(query, bus_id)
         return [dict(row) for row in rows]
 
+    @staticmethod
+    async def get_bus(conn: asyncpg.Connection) -> List[dict]:
+        """Get all drivers for a bus"""
+        query = """
+            SELECT * FROM buses
+        """
+        rows = await conn.fetch(query)
+        return [dict(row) for row in rows]

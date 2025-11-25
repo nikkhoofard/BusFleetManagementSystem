@@ -5,12 +5,12 @@ from app.core.database import get_db
 from app.api.v1.dependencies import get_current_user, require_profile
 from app.services.admin_service import AdminService
 from app.schemas.admin import (
-    BusCreateRequest, TripCreateRequest, HourlyBookingsResponse,
-    BusRevenueResponse, BusiestDriverResponse,BusDriversResponse
+    BusCreateRequest, TripCreateRequest, HourlyBookingsResponse,BusResponse,
+    BusRevenueResponse, BusiestDriverResponse,BusDriversResponse,RouteCreate,RouteResponse
 )
 from app.models.bus import BusCreate
 from app.models.trip import TripCreate
-
+from app.repositories.route_repository import RouteRepository
 router = APIRouter()
 
 
@@ -97,3 +97,55 @@ async def get_bus_drivers(
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+@router.post(
+    "/create-route",
+    response_model=RouteResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="ایجاد مسیر جدید",
+    description="فقط ادمین می‌تواند مسیر جدید اضافه کند"
+)
+async def create_route(
+    route_data: RouteCreate,
+    conn: asyncpg.Connection = Depends(get_db),
+    current_user: dict = Depends(require_profile("operator")),  # بعداً اضافه کن
+):
+    try:
+        route = await RouteRepository.create(conn, route_data)
+        return route
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"خطا در ایجاد مسیر: {str(e)}"
+        )
+    
+@router.get(
+    "/get-all-route",
+    response_model=List[RouteResponse],
+    summary="لیست همه مسیرها"
+)
+async def get_all_routes(
+    conn: asyncpg.Connection = Depends(get_db),
+    current_user: dict = Depends(require_profile("operator")),
+):
+    routes = await RouteRepository.get_all(conn)
+    return routes
+
+
+
+@router.get("/reports/get-all-bus",
+            response_model=List[BusResponse],
+            summary="لیست همه اتوبوس ها")
+async def get_bus_drivers(
+    current_user: dict = Depends(require_profile("operator")),
+    conn: asyncpg.Connection = Depends(get_db)
+):
+    """Get driver with most trips"""
+    try:
+        result = await AdminService.get_bus(conn)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    

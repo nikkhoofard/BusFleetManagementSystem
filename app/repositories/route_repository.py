@@ -28,3 +28,13 @@ class RouteRepository:
         row = await conn.fetchrow(query, route_id)
         return dict(row) if row else None
 
+
+    @staticmethod
+    async def get_all(conn: asyncpg.Connection) -> list[dict]:
+        query = """
+            SELECT id, origin, destination, distance_km, created_at
+            FROM routes
+            ORDER BY created_at DESC
+        """
+        rows = await conn.fetch(query)
+        return [dict(row) for row in rows]  
