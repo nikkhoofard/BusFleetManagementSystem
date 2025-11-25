@@ -135,7 +135,7 @@ async def get_all_routes(
 
 
 
-@router.get("/reports/get-all-bus",
+@router.get("/get-all-bus",
             response_model=List[BusResponse],
             summary="لیست همه اتوبوس ها")
 async def get_bus_drivers(
